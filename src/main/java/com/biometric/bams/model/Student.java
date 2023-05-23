@@ -28,6 +28,7 @@ public class Student {
 
     private Character gender;
 
+
     //    many - many relationship implementation
     @ManyToMany
     @JoinTable(

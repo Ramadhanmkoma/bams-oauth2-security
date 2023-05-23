@@ -19,4 +19,6 @@ public class Lecturer {
     private String lname;
 
     private String phone;
+
+    private Byte[] profileImage;
 }
