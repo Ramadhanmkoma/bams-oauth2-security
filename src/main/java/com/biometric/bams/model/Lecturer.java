@@ -1,13 +1,15 @@
 package com.biometric.bams.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Type;
+
+import java.sql.Date;
 
 @Data
 @Entity(name = "bams_lecturer")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Lecturer {
 
     @Id
@@ -20,5 +22,13 @@ public class Lecturer {
 
     private String phone;
 
-    private Byte[] profileImage;
+    private String email;
+
+    private Date dob;
+
+    private Character gender;
+
+
+    @Lob
+    private Byte[] profile_image;
 }
