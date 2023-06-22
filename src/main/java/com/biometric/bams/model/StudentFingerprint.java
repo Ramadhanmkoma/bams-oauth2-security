@@ -19,6 +19,10 @@ public class StudentFingerprint {
     @Lob  //large objects (lob): Binary data can get really large.
     private Byte[] fingerprint_recog;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "stud_id")
+    private Student student;
+
     public Byte[] getFingerprint_recog() {
         return fingerprint_recog;
     }

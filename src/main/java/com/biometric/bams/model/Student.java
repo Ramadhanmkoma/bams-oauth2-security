@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.sql.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity(name = "bams_student")
@@ -30,14 +32,19 @@ public class Student {
 
     private Character gender;
 
+    @OneToOne(mappedBy = "student", cascade = CascadeType.ALL)
+    private StudentFingerprint studentFingerprint;
+
+    @ManyToOne
+    @JoinColumn(name = "department")
+    private Department department;
 
     //    many - many relationship implementation
     @ManyToMany
     @JoinTable(
             name = "bams_student_classInfo",
             joinColumns = @JoinColumn(name = "stud_id"),
-            inverseJoinColumns = @JoinColumn(name = "classId")
-    )
+            inverseJoinColumns = @JoinColumn(name = "classId"))
     private List<ClassInfo> classInfo;
 
     public List<ClassInfo> getClassInfo() {
