@@ -2,6 +2,7 @@ package com.biometric.bams.controller;
 
 import com.biometric.bams.model.Student;
 import com.biometric.bams.repository.StudentRepo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,4 +21,19 @@ public class StudentController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<Student> getStudents() { return studentRepo.findAll(); }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Student addStudent(@RequestBody Student student) {
+        return  studentRepo.saveAndFlush(student);
+    }
+
+    @PutMapping
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
+    public Student updateStudent(@PathVariable Long id, @RequestBody Student student) {
+        Student existingStudent = studentRepo.getOne(id);
+        BeanUtils.copyProperties(student, existingStudent, "stud_id");
+        return studentRepo.saveAndFlush(existingStudent);
+    }
 }
