@@ -30,8 +30,8 @@ public class StudentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Student addStudent(@RequestBody Student student) {
-        return  studentRepo.saveAndFlush(student);
+    public void addStudent(@RequestBody Student student) {
+        studentService.registerStudent(student);
     }
 
     @PutMapping

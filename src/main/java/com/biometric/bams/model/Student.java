@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,7 +16,15 @@ import java.util.Set;
 public class Student {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(
+            name = "student_sequence",
+            sequenceName = "student_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "student_sequence"
+    )
     private Long stud_id;
 
     private String studReg_no;
@@ -30,7 +39,31 @@ public class Student {
 
     private LocalDate dob;
 
+    @Transient
+    private Integer age;
+
     private Character gender;
+
+    public Student() {
+    }
+
+    public Student(String studReg_no, String fname, String lname, String phone_no, String email, LocalDate dob, Character gender) {
+        this.studReg_no = studReg_no;
+        this.fname = fname;
+        this.lname = lname;
+        this.phone_no = phone_no;
+        this.email = email;
+        this.dob = dob;
+        this.gender = gender;
+    }
+
+    public Integer getAge() {
+        return Period.between(this.dob, LocalDate.now()).getYears();
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
 
     @OneToOne(mappedBy = "student", cascade = CascadeType.ALL)
     private StudentFingerprint studentFingerprint;
