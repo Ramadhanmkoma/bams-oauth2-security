@@ -1,6 +1,9 @@
 package com.biometric.bams.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Data;
 
 import java.util.HashSet;
@@ -8,8 +11,7 @@ import java.util.Set;
 
 @Data
 @Entity
-public class HR {
-
+public class Admin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,14 +20,5 @@ public class HR {
 
     private String password;
 
-    private String email;
-
-    private String phone;
-
-//    @ManyToMany(fetch = FetchType.LAZY)
-//    @JoinTable(name = "user_role",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "role_id")
-//    )
 //    private Set<Role> roles = new HashSet<>();
 }
