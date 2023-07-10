@@ -40,7 +40,8 @@ public class LecturerController {
                         .data(Map.of("lecturer", lecturer))
                         .message("Lecturer Retrieved")
                         .status(HttpStatus.OK)
-                        .statusCode(HttpStatus.OK.value()).build()
+                        .statusCode(HttpStatus.OK.value())
+                        .build()
         );
     }
 
@@ -67,4 +68,5 @@ public class LecturerController {
         lecturerService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 }
