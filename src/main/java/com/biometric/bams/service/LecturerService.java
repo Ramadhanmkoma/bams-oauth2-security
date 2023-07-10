@@ -1,7 +1,12 @@
 package com.biometric.bams.service;
 
-import org.springframework.stereotype.Service;
+import com.biometric.bams.model.Lecturer;
+import java.util.Collection;
 
-@Service
-public class LecturerService {
+public interface LecturerService {
+    Lecturer create(Lecturer lecturer);
+    Collection<Lecturer> list();
+    Lecturer get(Long id);
+    Lecturer update(Long id, Lecturer lecturer);
+    void delete(Long id);
 }

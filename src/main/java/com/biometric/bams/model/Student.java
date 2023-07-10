@@ -1,61 +1,52 @@
 package com.biometric.bams.model;
 
+import com.biometric.bams.enumeration.Status;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
+
+/**
+ * @author Ramadhan Mohammed Mkoma (<a href="http://www.ramadhanmkoma.me/">RamadhanMkoma</a>)
+ * @version 1.0
+ * @since 07/2023
+ */
 @Data
+@Builder
 @Entity(name = "bams_student")
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Student {
-
     @Id
-    @SequenceGenerator(
-            name = "student_sequence",
-            sequenceName = "student_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "student_sequence"
-    )
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long stud_id;
 
-    private String studReg_no;
-
+    @Column(unique = true)
+    @NotEmpty(message = "Registration number Cannot be empty or null")
+    private String regNo;
     private String fname;
-
     private String lname;
-
     private String phone_no;
 
+    @Column(unique = true)
+    @NotEmpty(message = "Email Address Cannot be empty or null")
     private String email;
-
     private LocalDate dob;
+    private Status status;
 
     @Transient
     private Integer age;
-
     private Character gender;
 
-    public Student() {
-    }
-
-    public Student(String studReg_no, String fname, String lname, String phone_no, String email, LocalDate dob, Character gender) {
-        this.studReg_no = studReg_no;
-        this.fname = fname;
-        this.lname = lname;
-        this.phone_no = phone_no;
-        this.email = email;
-        this.dob = dob;
-        this.gender = gender;
-    }
 
     public Integer getAge() {
         return Period.between(this.dob, LocalDate.now()).getYears();
