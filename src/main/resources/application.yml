@@ -14,11 +14,14 @@ spring:
     password: ${U_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
+    database-platform: org.hibernate.dialect.postgreSQLDialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
+    generate-ddl: true
     properties:
       hibernate:
+        globally_quoted_identifiers: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
         # This property is needed so that the postgres JDBC driver can create a Lob correctly on the Java side.
@@ -26,7 +29,9 @@ spring:
           lob:
             non_contextual_creation: true
       database: postgresql
-      database-platform: org.hibernate.dialect.postgreSQLDialect
+  sql:
+    init:
+      mode: never
   logging:
     level:
       org:
