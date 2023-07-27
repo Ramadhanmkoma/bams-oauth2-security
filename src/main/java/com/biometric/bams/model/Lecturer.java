@@ -1,96 +1,38 @@
 package com.biometric.bams.model;
 
-import com.biometric.bams.enumeration.Role;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import lombok.*;
 
-import java.io.Serializable;
-import java.sql.Date;
-import java.util.Collection;
-import java.util.List;
-
+/**
+ * @author: Ramadhan Mohammed
+ * @website: <a href="http://ramadhanmkoma.me">Ramadhan</a>
+ * @createdDate: Thursday, 20 July 2023
+ */
 @Data
 @Builder
-@Entity(name = "bams_lecturer")
+@Entity
+@Table(name = "bams_lecturers")
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Lecturer implements Serializable, UserDetails {
+@EqualsAndHashCode(callSuper = true)
+public class Lecturer extends User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, updatable = false)
-    private Long lecturer_id;
-    private String fname;
-    private String lname;
-    private String phone;
-    @Column(unique = true)
-    @NotEmpty(message = "Email Address Cannot be empty or null")
-    private String email;
-    private Date dob;
-    private Character gender;
-    @Lob
-    @Column(length = 1000)
-    private byte[] profile_image;
-    @Column(nullable = false, updatable = false)
-    @NotEmpty(message = "Email Address Cannot be empty or null")
-    private String lecturerCode;
-    private String password;
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "department")
-    private Department department;
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_role",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
+    @NotEmpty(message = "Lecturer ID cannot be empty")
+    @Column(nullable = false, unique = true)
+    private String lectId;
 
-    /**
-     *  Spring Boot Security
-     *  Implementation
-     */
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
-    }
+    @NotEmpty(message = "Department cannot be empty")
+    @Column(nullable = false)
+    private String department;
 
-    @Override
-    public String getPassword() {
-        return password;
-    }
+    @NotEmpty(message = "cannot be empty")
+    @Column(nullable = false)
+    private String subjectTaught;
 
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
+    @OneToOne(mappedBy = "lecturer", cascade = CascadeType.ALL)
+    private BiometricRecord biometricRecord;
 }

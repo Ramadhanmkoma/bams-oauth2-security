@@ -1,17 +1,11 @@
 package com.biometric.bams.model;
 
-import com.biometric.bams.enumeration.Status;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
-import java.time.Period;
-import java.util.List;
 
 
 /**
@@ -20,63 +14,28 @@ import java.util.List;
  * @since 07/2023
  */
 @Data
-@Builder
-@Entity(name = "bams_student")
+@Entity
+@Table(name = "bams_students")
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Student {
+@EqualsAndHashCode(callSuper = true)
+public class Student extends User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long stud_id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(unique = true)
-    @NotEmpty(message = "Registration number Cannot be empty or null")
+    @NotEmpty(message = "registration number cannot be empty")
+    @Column(nullable = false, unique = true)
     private String regNo;
-    private String fname;
-    private String lname;
-    private String phone_no;
 
-    @Column(unique = true)
-    @NotEmpty(message = "Email Address Cannot be empty or null")
-    private String email;
-    private LocalDate dob;
-    private Status status;
+    @NotEmpty(message = "Department cannot be empty")
+    @Column(nullable = false)
+    private String department;
 
-    @Transient
-    private Integer age;
-    private Character gender;
-
-
-    public Integer getAge() {
-        return Period.between(this.dob, LocalDate.now()).getYears();
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
+    @Column(nullable = false)
+        private String batch;
 
     @OneToOne(mappedBy = "student", cascade = CascadeType.ALL)
-    private StudentFingerprint studentFingerprint;
-
-    @ManyToOne
-    @JoinColumn(name = "department")
-    private Department department;
-
-    //    many - many relationship implementation
-    @ManyToMany
-    @JoinTable(
-            name = "bams_student_classInfo",
-            joinColumns = @JoinColumn(name = "stud_id"),
-            inverseJoinColumns = @JoinColumn(name = "classId"))
-    private List<ClassInfo> classInfo;
-
-    public List<ClassInfo> getClassInfo() {
-        return classInfo;
-    }
-
-    public void setClassInfo(List<ClassInfo> classInfo) {
-        this.classInfo = classInfo;
-    }
+    private BiometricRecord biometricRecord;
 
 }

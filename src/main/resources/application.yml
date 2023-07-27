@@ -5,18 +5,29 @@ server:
     include-message: always
     whitelabel:
       enabled: false
-
+application:
+  title: BiometricAttendance
+  version: 1.0
 # Database Connection
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: 6d31ecf40ce20110ee8b
+            client-secret: 7983c51490efed581fc9336baef3509399441a37
+#  autoconfigure:
+#    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
   datasource:
-    url: ${DB_URL}
-    username: ${U_NAME}
-    password: ${U_PASSWORD}
+    url: jdbc:postgresql://localhost:5432/bams
+    username: postgres
+    password: postgres
     driver-class-name: org.postgresql.Driver
   jpa:
     database-platform: org.hibernate.dialect.postgreSQLDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     show-sql: true
     generate-ddl: true
     properties:
@@ -29,11 +40,14 @@ spring:
           lob:
             non_contextual_creation: true
       database: postgresql
-  sql:
-    init:
-      mode: never
+#  sql:
+#    init:
+#      mode: always
+#      continue-on-error: false
   logging:
     level:
       org:
+        springframework:
+          security: TRACE
         hibernate:
           SQL: debug

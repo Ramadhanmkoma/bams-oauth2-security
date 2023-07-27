@@ -1,88 +1,91 @@
 package com.biometric.bams.service.implementation;
 
+import com.biometric.bams.exception.ApiException;
 import com.biometric.bams.model.Student;
+import com.biometric.bams.model.User;
 import com.biometric.bams.repository.StudentRepo;
 import com.biometric.bams.service.StudentService;
-import com.biometric.bams.service.exceptions.EmailNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Optional;
 
-import static com.biometric.bams.enumeration.Status.ATTENDED;
-import static com.biometric.bams.enumeration.Status.MISSED;
-import static java.lang.Boolean.TRUE;
-import static org.springframework.data.domain.PageRequest.of;
-
 /**
- * @author Ramadhan Mohammed Mkoma (<a href="http://www.ramadhanmkoma.me/">RamadhanMkoma</a>)
- * @version 1.0
- * @since 07/2023
+ * @author: Ramadhan Mohammed
+ * @website: <a href="http://ramadhanmkoma.me">Ramadhan</a>
+ * @createdDate: Tuesday, 25 July 2023
  */
 @RequiredArgsConstructor
 @Service
 @Transactional
-@Slf4j //print int the console
+@Slf4j
 public class StudentServiceImpl implements StudentService {
-
-    @Autowired
     private final StudentRepo studentRepo;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    @Override
-    public Student create(Student student) {
-        log.info("Creating new Student: {}", student.getRegNo());
-        return studentRepo.saveAndFlush(student);
+    public Collection<User> list() {
+        return studentRepo.findAll();
     }
 
     @Override
-    public Collection<Student> list(int limit) {
-        log.info("Fetching All Students...");
-        return studentRepo.findAll(of(0, limit)).toList();
+    public Student getEmail(String email) {
+        Optional<Student> studEmail = studentRepo.findStudentByEmail(email);
+        return studEmail.orElseThrow(() -> new ApiException("Student with email "));
     }
 
     @Override
-    public Student get(Long id) {
-        log.info("Fetching Student By ID...");
-        Optional<Student> student = studentRepo.findById(id);
-        return student.orElse(null);
+    public Optional<Student> getUsername(String uname) {
+        return studentRepo.findStudentByUsername(uname);
     }
 
     @Override
-    public Student update(Student student) {
-        log.info("Update student: {} {}", student.getFname(), student.getLname());
-        return studentRepo.saveAndFlush(student);
+    public Optional<Student> getRegNo(String regNo) {
+        return studentRepo.findByRegNo(regNo);
     }
 
     @Override
-    public Boolean delete(Long id) {
-        log.info("Deleting Student: {}", id);
-        Optional<Student> student = studentRepo.findById(id);
-        if (student.isPresent()) {
-            studentRepo.deleteById(id);
-            return TRUE;
+    public Optional<Student> getOne(Long id) {
+        return studentRepo.findStudentById(id);
+    }
+
+    @Override
+    public Student update(Long id, Student student) {
+        log.info("Updating a student with id {} and username {}", id, student.getUsername());
+        if (studentRepo.findById(id).isPresent()) {
+            student.setId(id);
+            return studentRepo.save(student);
+        } else {
+            return null;
         }
-        return false;
     }
 
-    @Override
-    public Student markAttendance(String regNo) {
-        log.info("Marking Attendance STATUS: {}", regNo);
-        Student student = studentRepo.findStudentByRegNo(regNo);
-        student.setStatus(ATTENDED);
-        return studentRepo.saveAndFlush(student);
+    public Student create(Student student) {
+        Optional<Student> username = studentRepo.findStudentByUsername(student.getUsername());
+        Optional<Student> email = studentRepo.findStudentByEmail(student.getEmail());
+        if (username.isPresent() || email.isPresent()) throw new ApiException("Username or Email already taken. Please! Use a different username");
 
+        try {
+            log.info("Creating a new student... with username {}", student.getUsername());
+            student.setImageUrl(setStudentImageUrl());
+            //student.setRole(ROLE_STUDENT);
+            student.setPassword(passwordEncoder.encode(student.getPassword()));
+            return studentRepo.saveAndFlush(student);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            throw new ApiException("Error Occured!");
+        }
     }
 
-    @Override
-    public Student email(String email) {
-        log.info("Fetching By Email: {}", email);
-        Optional<Student> student = studentRepo.findStudentByEmail(email);
-        return student.orElseThrow(() -> new EmailNotFoundException("User with Email " + email + " was not found"));
+    public void delete(Long id) {
+        log.info("Deleting student with id {}", id);
+        studentRepo.deleteById(id);
+    }
+
+    private String setStudentImageUrl() {
+        return "https://cdn-icons-png.flaticon.com/256/57/57073.png";
     }
 }

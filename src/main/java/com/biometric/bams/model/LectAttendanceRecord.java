@@ -1,11 +1,11 @@
 package com.biometric.bams.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author: Ramadhan Mohammed
@@ -14,19 +14,21 @@ import java.util.List;
  */
 @Data
 @Entity
-@Table(name = "bams_classinfos")
-public class ClassInfo {
+@Table(name = "bams_lect_attendances")
+@AllArgsConstructor
+@NoArgsConstructor
+public class LectAttendanceRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "stud_id", nullable = false)
-    private Student student;
-
-    @ManyToOne
     @JoinColumn(name = "lect_id", nullable = false)
     private Lecturer lecturer;
+
+    @ManyToOne
+    @JoinColumn(name = "class_id", nullable = false)
+    private ClassInfo classInfo;
 
     @Column(nullable = false)
     private LocalDate date;
@@ -34,7 +36,7 @@ public class ClassInfo {
     @Column(nullable = false)
     private boolean present;
 
-    @OneToMany(mappedBy = "classInfo", cascade = CascadeType.ALL)
-    private List<Session> sessions = new ArrayList<>();
-
+    @ManyToOne
+    @JoinColumn(name = "session_id", nullable = false)
+    private Session session;
 }
