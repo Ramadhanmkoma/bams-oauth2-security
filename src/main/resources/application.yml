@@ -16,13 +16,13 @@ spring:
         registration:
           github:
             client-id: 6d31ecf40ce20110ee8b
-            client-secret: 7983c51490efed581fc9336baef3509399441a37
+            client-secret: ${client_secret}
 #  autoconfigure:
 #    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
   datasource:
     url: jdbc:postgresql://localhost:5432/bams
     username: postgres
-    password: postgres
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     database-platform: org.hibernate.dialect.postgreSQLDialect
