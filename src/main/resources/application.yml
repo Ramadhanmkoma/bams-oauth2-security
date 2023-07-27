@@ -15,7 +15,7 @@ spring:
       client:
         registration:
           github:
-            client-id: 6d31ecf40ce20110ee8b
+            client-id: ${CLIENT_ID}
             client-secret: ${client_secret}
 #  autoconfigure:
 #    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
